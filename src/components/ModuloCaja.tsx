@@ -263,43 +263,73 @@ export default function ModuloCaja() {
       </div>
 
       {/* DERECHA */}
-      <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-[2rem] p-6 text-white flex flex-col justify-between shadow-xl relative">
+<div className="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl flex flex-col justify-between relative overflow-hidden">
 
-        {ventaExitosa && (
-          <div className="absolute inset-0 bg-emerald-500 flex items-center justify-center z-10 rounded-[2rem]">
-            <CheckCircle size={60} />
-          </div>
-        )}
+  {/* OVERLAY VENTA EXITOSA */}
+  {ventaExitosa && (
+    <div className="absolute inset-0 bg-emerald-500 flex flex-col items-center justify-center z-10 animate-in fade-in duration-300">
+      <CheckCircle size={64} className="mb-4 animate-bounce" />
+      <p className="font-black text-xl uppercase tracking-wider">
+        Venta exitosa
+      </p>
+    </div>
+  )}
 
-        <div>
-          <div className="flex items-center gap-2 text-xs uppercase text-slate-400 mb-6">
-            <Receipt size={14} />
-            Ticket
-          </div>
+  {/* HEADER + TOTAL */}
+  <div>
+    <div className="flex items-center gap-2 mb-8 opacity-40 uppercase tracking-[0.3em] text-[10px] font-bold">
+      <Receipt size={14} />
+      Ticket de pago
+    </div>
 
-          <div className="mb-8">
-            <p className="text-sm text-slate-400">Total</p>
+    {/* RESUMEN */}
+    <div className="space-y-6 mb-10">
 
-            <div className="text-6xl font-black tracking-tight text-white">
-              ${total.toLocaleString()}
-            </div>
-          </div>
-        </div>
-
-        <PaymentMP
-          carrito={carrito}
-          onConfirm={confirmarVenta}
-          loading={cargando}
-        />
-
-        <button
-          onClick={() => setCarrito([])}
-          disabled={!carrito.length}
-          className="mt-4 text-sm text-slate-400 hover:text-white"
-        >
-          Vaciar carrito
-        </button>
+      {/* SUBTOTAL */}
+      <div className="flex justify-between items-center text-slate-400">
+        <span className="text-[10px] font-bold uppercase tracking-widest">
+          Subtotal
+        </span>
+        <span className="font-mono tabular-nums">
+          ${total.toLocaleString()}
+        </span>
       </div>
+
+      {/* TOTAL GRANDE */}
+      <div className="border-t border-slate-800 pt-6">
+        <p className="text-emerald-500 font-bold uppercase text-[10px] mb-2 tracking-widest">
+          Total a cobrar
+        </p>
+
+        <div className="text-7xl font-black tracking-tighter text-white tabular-nums">
+          <span className="text-2xl text-slate-600 mr-1">$</span>
+          {total.toLocaleString()}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  {/* MÉTODO DE PAGO */}
+  <div className="space-y-4">
+
+    <PaymentMP
+      carrito={carrito}
+      onConfirm={confirmarVenta}
+      loading={cargando}
+    />
+
+    {/* VACIAR */}
+    <button
+      onClick={() => setCarrito([])}
+      disabled={!carrito.length}
+      className="w-full py-3 text-slate-500 font-bold text-[10px] uppercase tracking-widest hover:text-white transition-colors disabled:opacity-30"
+    >
+      Vaciar carrito
+    </button>
+
+  </div>
+</div>
     </div>
   );
 }
