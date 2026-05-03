@@ -6,6 +6,8 @@ import { QrCode, Copy, CheckCircle } from "lucide-react";
 interface Props {
   carrito: any[];
   onPagoConfirmado: () => void;
+  onConfirm: () => Promise<void>;
+  loading: boolean;
 }
 
 export default function PaymentLocal({ carrito, onPagoConfirmado }: Props) {
@@ -28,11 +30,6 @@ export default function PaymentLocal({ carrito, onPagoConfirmado }: Props) {
           Escanear QR
         </p>
 
-        <img
-          src="/qr-mercadopago.png"
-          className="mx-auto w-40 h-40"
-          alt="QR"
-        />
 
         <p className="text-xs text-slate-400 mt-2">
           Abrir Mercado Pago
