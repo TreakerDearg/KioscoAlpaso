@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import QRCode from "react-qr-code";
 
 import {
@@ -17,6 +17,8 @@ interface Props {
   loading?: boolean;
 }
 
+type MetodoQR = "astropay" | "mercadopago";
+
 export default function PaymentLocal({
   carrito,
   onConfirm,
@@ -24,12 +26,26 @@ export default function PaymentLocal({
 }: Props) {
   const [copiado, setCopiado] = useState(false);
 
-  // Alias de cobro
+  // Método seleccionado
+  const [metodoQR, setMetodoQR] =
+    useState<MetodoQR>("mercadopago");
+
+  // Alias
   const alias = "MyLadyArgel";
 
-  // Link real de pago
-  const paymentLink =
-    "https://onetouch.astropay.com/payment?external_reference_id=I6GP8aXDdXhyQXwLznFZk2KhdQ3UQHpQ";
+  // Links
+  const links = useMemo(() => ({
+    mercadopago:
+      "https://link.mercadopago.com.ar/26alpaso",
+
+    astropay:
+      "https://onetouch.astropay.com/payment?external_reference_id=I6GP8aXDdXhyQXwLznFZk2KhdQ3UQHpQ",
+  }), []);
+
+  // Link actual
+  const paymentLink = useMemo(() => {
+    return links[metodoQR];
+  }, [metodoQR, links]);
 
   const copiarAlias = async () => {
     try {
@@ -48,6 +64,51 @@ export default function PaymentLocal({
   return (
     <div className="space-y-5">
 
+      {/* SELECTOR */}
+      <div className="bg-slate-800 rounded-[2rem] p-2 flex gap-2">
+
+        <button
+          type="button"
+          onClick={() => setMetodoQR("mercadopago")}
+          className={`
+            flex-1
+            py-3
+            rounded-2xl
+            text-sm
+            font-black
+            transition-all
+            ${
+              metodoQR === "mercadopago"
+                ? "bg-emerald-500 text-slate-950 shadow-lg"
+                : "text-slate-400 hover:text-white"
+            }
+          `}
+        >
+          Mercado Pago
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setMetodoQR("astropay")}
+          className={`
+            flex-1
+            py-3
+            rounded-2xl
+            text-sm
+            font-black
+            transition-all
+            ${
+              metodoQR === "astropay"
+                ? "bg-indigo-500 text-white shadow-lg"
+                : "text-slate-400 hover:text-white"
+            }
+          `}
+        >
+          AstroPay
+        </button>
+
+      </div>
+
       {/* QR CARD */}
       <div className="bg-white rounded-[2rem] p-5 border border-slate-200 shadow-sm">
 
@@ -60,17 +121,21 @@ export default function PaymentLocal({
             </p>
 
             <h3 className="text-lg font-black text-slate-900 mt-1">
-              Escanear código
+              {metodoQR === "mercadopago"
+                ? "Mercado Pago"
+                : "AstroPay"}
             </h3>
           </div>
 
-          {/* ICONO */}
           <div className="bg-slate-100 p-3 rounded-2xl">
-            <QrCode size={22} className="text-slate-700" />
+            <QrCode
+              size={22}
+              className="text-slate-700"
+            />
           </div>
         </div>
 
-        {/* QR REAL */}
+        {/* QR */}
         <div className="bg-slate-50 border border-slate-200 rounded-[2rem] p-5 flex justify-center items-center overflow-hidden">
 
           <div className="w-full max-w-[220px]">
@@ -89,9 +154,14 @@ export default function PaymentLocal({
 
         {/* INFO */}
         <div className="mt-4 text-center">
+
           <p className="text-xs font-medium text-slate-500">
-            Escaneá con Mercado Pago o AstroPay
+            Escaneá con{" "}
+            {metodoQR === "mercadopago"
+              ? "Mercado Pago"
+              : "AstroPay"}
           </p>
+
         </div>
       </div>
 
@@ -131,9 +201,29 @@ export default function PaymentLocal({
         href={paymentLink}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-full flex items-center justify-center gap-2 bg-indigo-500 hover:bg-indigo-600 active:scale-[0.98] text-white py-4 rounded-2xl font-black transition-all shadow-lg"
+        className={`
+          w-full
+          flex
+          items-center
+          justify-center
+          gap-2
+          py-4
+          rounded-2xl
+          font-black
+          transition-all
+          shadow-lg
+          text-white
+          active:scale-[0.98]
+
+          ${
+            metodoQR === "mercadopago"
+              ? "bg-emerald-500 hover:bg-emerald-600"
+              : "bg-indigo-500 hover:bg-indigo-600"
+          }
+        `}
       >
         <ExternalLink size={18} />
+
         Abrir Link de Pago
       </a>
 
@@ -144,8 +234,8 @@ export default function PaymentLocal({
         onClick={onConfirm}
         className="
           w-full
-          bg-emerald-500
-          hover:bg-emerald-600
+          bg-slate-900
+          hover:bg-black
           disabled:bg-slate-300
           disabled:text-slate-500
           disabled:cursor-not-allowed
